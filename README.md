@@ -14,7 +14,7 @@ Sistema para gestão de presenças para o NPI construído em Laravel 12 e Tailwi
 1. Clonar o repositório:
 
 ```bash
-git clone <URL_DO_REPOSITORIO> diario-presenca
+git clone https://github.com/vportes/diario-presenca.git
 cd diario-presenca
 ```
 
