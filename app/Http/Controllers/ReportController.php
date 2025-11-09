@@ -1,13 +1,36 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Models\Presence;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * Classe ReportController
+ *
+ * Gerencia a geração e exportação de relatórios para coordenadores.
+ *
+ * @package App\Http\Controllers
+ */
 class ReportController extends Controller
 {
-    public function __construct() { $this->middleware('auth'); }
+    /**
+     * Cria uma nova instância do controller.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
-    public function exportCsv(Request $request)
+    /**
+     * Exporta registros de presença para formato CSV.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportCsv(Request $request): StreamedResponse
     {
         $user = $request->user();
         if (!$user->isCoordinator()) abort(403);

@@ -1,16 +1,42 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Http\Requests\StorePresenceRequest;
 use App\Models\Presence;
 use App\Models\AuditLog;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Carbon\Carbon;
 
+/**
+ * Classe PresenceController
+ *
+ * Gerencia os registros de presença para alunos e coordenadores.
+ * Alunos podem visualizar seu próprio histórico de presença e registrar novas presenças.
+ * Coordenadores podem visualizar todas as presenças.
+ *
+ * @package App\Http\Controllers
+ */
 class PresenceController extends Controller
 {
-    public function __construct() { $this->middleware('auth'); }
+    /**
+     * Cria uma nova instância do controller.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
-    public function index(Request $request)
+    /**
+     * Exibe uma listagem de presenças.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request): View
     {
         $user = $request->user();
         if ($user->isCoordinator()) {
@@ -20,8 +46,14 @@ class PresenceController extends Controller
         }
         return view('presence.index', compact('presences'));
     }
-// ... existing code ...
-    public function history(Request $request)
+
+    /**
+     * Exibe o histórico de presença para o usuário autenticado.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
+    public function history(Request $request): View
     {
         $user = $request->user();
         if ($user->isCoordinator()) {
@@ -31,8 +63,14 @@ class PresenceController extends Controller
         }
         return view('historico.index', compact('presences'));
     }
-// ... existing code ...
-    public function justify(Request $request)
+
+    /**
+     * Inicia o processo de justificativa para uma data específica.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function justify(Request $request): RedirectResponse
     {
         $request->validate([
             'date' => ['required','date_format:Y-m-d'],
@@ -63,10 +101,24 @@ class PresenceController extends Controller
 
         return redirect()->route('justifications.create', ['presence' => $presence->id]);
     }
-// ... existing code ...
-    public function create() { return view('presence.create'); }
 
-    public function store(StorePresenceRequest $request)
+    /**
+     * Exibe o formulário para criar uma nova presença.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create(): View
+    {
+        return view('presence.create');
+    }
+
+    /**
+     * Armazena uma presença recém-criada no banco de dados.
+     *
+     * @param \App\Http\Requests\StorePresenceRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(StorePresenceRequest $request): RedirectResponse
     {
         $user = $request->user();
         $occurred = $request->input('occurred_at') ? Carbon::parse($request->input('occurred_at')) : now();

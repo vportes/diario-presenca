@@ -1,14 +1,38 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Models\Observation;
 use App\Models\AuditLog;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
+/**
+ * Classe ObservationController
+ *
+ * Gerencia a criação de observações por coordenadores sobre alunos.
+ *
+ * @package App\Http\Controllers
+ */
 class ObservationController extends Controller
 {
-    public function __construct() { $this->middleware('auth'); }
+    /**
+     * Cria uma nova instância do controller.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
-    public function store(Request $request, $userId)
+    /**
+     * Armazena uma observação recém-criada no banco de dados.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $userId ID do usuário sendo observado
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request, $userId): RedirectResponse
     {
         $actor = $request->user();
         if (!$actor->isCoordinator()) abort(403);
