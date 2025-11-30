@@ -124,6 +124,23 @@ class PresenceController extends Controller
         $occurred = $request->input('occurred_at') ? Carbon::parse($request->input('occurred_at')) : now();
         $status = $request->input('status') ?? 'present';
 
+        // Check for existing presences today to determine type
+        $todayPresences = $user->presences()
+            ->whereDate('occurred_at', $occurred->toDateString())
+            ->orderBy('occurred_at')
+            ->get();
+
+        $count = $todayPresences->count();
+        $message = '';
+
+        if ($count >= 2) {
+            $message = 'Presença adicional registrada.';
+        } elseif ($count == 1) {
+            $message = 'Saída registrada com sucesso!';
+        } else {
+            $message = 'Entrada registrada com sucesso!';
+        }
+
         $presence = Presence::create([
             'user_id' => $user->id,
             'occurred_at' => $occurred,
@@ -137,6 +154,6 @@ class PresenceController extends Controller
             'meta' => ['presence_id' => $presence->id, 'status' => $status]
         ]);
 
-        return redirect()->route('presence.index')->with('success','Presença registrada.');
+        return redirect()->route('presence.index')->with('popup_message', $message);
     }
 }

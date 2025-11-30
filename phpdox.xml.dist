@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpdox xmlns="http://xml.phpdox.net/config">
+    <files>
+        <directory>app</directory>
+        <ignore>
+            <directory>vendor</directory>
+            <directory>node_modules</directory>
+        </ignore>
+    </files>
+    <logging>
+        <level>info</level>
+    </logging>
+    <transformer output="docs/phpdox" template="clean" graphs="true"/>
+</phpdox>
